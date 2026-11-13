@@ -1,0 +1,18 @@
+{
+  "manifest_version": 3,
+  "minimum_chrome_version": "120",
+  "name": "Очередь Coursera",
+  "version": "1.1.22",
+  "description": "Локальная очередь заданий Coursera с проверкой результата.",
+  "permissions": ["storage", "tabs", "scripting", "alarms", "downloads", "nativeMessaging"],
+  "host_permissions": [
+    "https://www.coursera.org/*",
+    "https://chatgpt.com/*",
+    "https://gemini.google.com/*",
+    "https://*.oaiusercontent.com/*"
+  ],
+  "optional_host_permissions": ["http://127.0.0.1/*"],
+  "background": { "service_worker": "src/worker.js", "type": "module" },
+  "action": { "default_title": "Очередь Coursera" },
+  "options_page": "ui/index.html"
+}

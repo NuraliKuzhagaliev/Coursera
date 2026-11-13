@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Очередь Coursera</title>
+  <link rel="stylesheet" href="style.css">
+  <script type="module" src="index.js"></script>
+</head>
+<body>
+  <main>
+    <header>
+      <p class="eyebrow">Локальное расширение для Chromium</p>
+      <h1>Очередь Coursera</h1>
+      <div class="actions">
+        <button id="start" type="button">Старт</button>
+        <button id="pause" type="button">Пауза</button>
+        <button id="resume" type="button">Продолжить</button>
+      </div>
+      <p id="progress" role="status"></p>
+      <p id="notice" role="status"></p>
+    </header>
+    <details>
+      <summary>Проверить один квиз</summary>
+      <form id="single">
+        <label>Ссылка из Grades <input id="single-url" type="url" required placeholder="https://www.coursera.org/learn/…"></label>
+        <p>Расширение обработает только выбранный квиз и отправит одну попытку. Задания с файлами пропускаются. Если у квиза есть таймер, он запустится при подтверждении начала.</p>
+        <button id="single-start" type="submit">Запустить проверку с отправкой</button>
+      </form>
+      <p id="single-result" role="status"></p>
+    </details>
+    <details>
+      <summary>Настройки адаптера и файлов</summary>
+      <form id="settings">
+        <label>Основной адаптер
+          <select id="provider"><option value="chatgpt">ChatGPT</option><option value="gemini">Gemini</option></select>
+        </label>
+        <label><input type="checkbox" id="fallback"> Разрешить Gemini как резерв для ChatGPT</label>
+        <label>Запросов ChatGPT до нового чата
+          <input id="chat-requests" type="number" min="0" step="1" required aria-describedby="chat-requests-help">
+        </label>
+        <small id="chat-requests-help">0 отключает смену чата по счётчику.</small>
+        <label>Минимальное время до отправки квиза, секунд
+          <input id="quiz-delay" type="number" min="0" step="1" required aria-describedby="quiz-delay-help">
+        </label>
+        <small id="quiz-delay-help">0 отключает задержку. Отсчёт начинается при открытии формы квиза.</small>
+        <label><input type="checkbox" id="parallel-enabled"> Использовать координатор</label>
+        <label>Код параллельной очереди
+          <input id="parallel-key" type="password" pattern="[a-f0-9]{32}" autocomplete="off" disabled
+            aria-describedby="parallel-help">
+        </label>
+        <small id="parallel-help">Включите координатор для распределения курсов между профилями. Для самостоятельной работы используйте один профиль.</small>
+        <button type="submit">Сохранить настройки</button>
+      </form>
+      <p>ID расширения для установки помощника <code id="extension-id"></code></p>
+      <button id="native" type="button">Проверить Native Messaging</button>
+    </details>
+    <section aria-labelledby="report-title">
+      <h2 id="report-title">Отчёт по курсам</h2>
+      <div id="report"></div>
+    </section>
+  </main>
+</body>
+</html>

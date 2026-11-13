@@ -1,0 +1,14 @@
+node_modules/
+.env
+.env.*
+!.env.example
+*.zip
+.parallel/
+.engineering/
+.publish/
+platform/build/
+platform/admin/.next/
+platform/admin/next-env.d.ts
+dist/
+__pycache__/
+*.tsbuildinfo

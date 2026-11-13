@@ -1,0 +1,34 @@
+services:
+  - type: web
+    name: coursera-queue-nurali-api
+    runtime: node
+    plan: free
+    region: frankfurt
+    buildCommand: npm ci && node platform/build.mjs --server-only
+    startCommand: npm run start:api
+    healthCheckPath: /health
+    envVars:
+      - key: NODE_VERSION
+        value: 22.20.0
+      - key: SUPABASE_URL
+        sync: false
+      - key: SUPABASE_PUBLISHABLE_KEY
+        sync: false
+      - key: CQ_SERVER_KEY
+        sync: false
+      - key: ADMIN_ORIGIN
+        sync: false
+      - key: STRIPE_LIVE
+        value: "false"
+  - type: web
+    name: coursera-queue-nurali-admin
+    runtime: node
+    plan: free
+    region: frankfurt
+    buildCommand: npm ci && npm run build:admin
+    startCommand: npm run start:admin -- --hostname 0.0.0.0 --port $PORT
+    envVars:
+      - key: NODE_VERSION
+        value: 22.20.0
+      - key: NEXT_PUBLIC_API_ORIGIN
+        sync: false

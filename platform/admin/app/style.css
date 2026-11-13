@@ -1,0 +1,13 @@
+:root { color-scheme: light dark; font: 16px/1.55 system-ui,sans-serif; }
+body { margin: 0; background: Canvas; color: CanvasText; }
+main { max-width: 74rem; margin: auto; padding: clamp(1rem,4vw,3rem); }
+section { border-bottom: 1px solid GrayText; padding: 1rem 0; }
+form { display: grid; gap: .65rem; max-width: 38rem; margin: 1rem 0; padding: 1rem; border: 1px solid GrayText; border-radius: .5rem; }
+label { display: grid; gap: .3rem; }
+button,input,select,textarea { font: inherit; }
+button { padding: .45rem .8rem; cursor: pointer; }
+.actions { display: flex; gap: .5rem; flex-wrap: wrap; }
+.table-wrap { overflow-x: auto; }
+table { width: 100%; border-collapse: collapse; margin-top: 1rem; }
+td,th { padding: .7rem; border-bottom: 1px solid GrayText; text-align: left; vertical-align: top; }
+small { overflow-wrap: anywhere; }

@@ -1,0 +1,19 @@
+:root { color-scheme: light dark; font: 16px/1.55 system-ui, sans-serif; }
+body { margin: 0; background: Canvas; color: CanvasText; }
+main { max-width: 62rem; margin: auto; padding: clamp(1rem, 5vw, 3rem); }
+header { border-bottom: 1px solid GrayText; padding-bottom: 1rem; }
+h1 { margin: 0 0 1rem; font-size: clamp(1.9rem, 5vw, 3rem); line-height: 1.1; }
+.eyebrow { font-size: .85rem; color: GrayText; margin: 0 0 .5rem; }
+.actions { display: flex; gap: .5rem; flex-wrap: wrap; }
+button, select, input { font: inherit; }
+button { padding: .35rem .75rem; }
+#start:not(:disabled), #resume:not(:disabled) { background: #1752ae; color: white; border: 1px solid #1752ae; border-radius: 4px; }
+details, article { padding: .8rem 0; border-bottom: 1px solid GrayText; }
+summary { cursor: pointer; font-weight: 650; }
+form { display: grid; gap: .7rem; justify-items: start; margin-top: 1rem; }
+article h3 { margin: 0; overflow-wrap: anywhere; }
+article p { margin: .25rem 0; }
+ul { padding-left: 1.35rem; }
+li { margin-bottom: .35rem; overflow-wrap: anywhere; }
+a { color: LinkText; }
+#progress:empty, #notice:empty { display: none; }
