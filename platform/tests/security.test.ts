@@ -225,3 +225,26 @@ test("signed billing is idempotent and older events reconcile the current Stripe
     assert.equal((await f.db.query<{ count: number }>("select count(*)::int as count from coursera_queue.payments")).rows[0].count, 3);
   } finally { await f.close(); }
 });
+
+test("legacy paid licenses survive a blocked upgrade and a verified subscription mapping", async () => {
+  const db = new PGlite();
+  try {
+    await db.exec("create role anon; create role authenticated; create schema auth;" +
+      "create table auth.users(id uuid primary key,email text,email_confirmed_at timestamptz,banned_until timestamptz);" +
+      "create table auth.sessions(id uuid primary key,user_id uuid,created_at timestamptz,not_after timestamptz);");
+    for (const name of ["20261113162703_coursera_queue_platform.sql", "20261113165217_coursera_device_enforcement.sql"]) {
+      await db.exec(await readFile("supabase/migrations/" + name, "utf8"));
+    }
+    const id = randomUUID();
+    await db.query("insert into auth.users values($1,'legacy@example.test',now(),null)", [id]);
+    await db.query("insert into coursera_queue.accounts(user_id,email) values($1,'legacy@example.test')", [id]);
+    await db.query("insert into coursera_queue.licenses values($1,'stripe','standard','active',now()+interval '1 day')", [id]);
+    const upgrade = await readFile("supabase/migrations/20261113170825_coursera_subscription_entitlements.sql", "utf8");
+    await assert.rejects(() => db.transaction(tx => tx.exec(upgrade)), /Map existing Stripe licenses/);
+    await db.exec("alter table coursera_queue.licenses add column if not exists subscription_id text not null default ''");
+    await db.query("update coursera_queue.licenses set subscription_id='sub_verified' where user_id=$1", [id]);
+    await db.exec(upgrade);
+    const result = await db.query<{ status: string; subscription_id: string }>("select status,subscription_id from coursera_queue.licenses");
+    assert.deepEqual(result.rows, [{ status: "active", subscription_id: "sub_verified" }]);
+  } finally { await db.close(); }
+});

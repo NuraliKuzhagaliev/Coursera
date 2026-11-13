@@ -1,8 +1,15 @@
-alter table coursera_queue.licenses add column subscription_id text not null default '';
+alter table coursera_queue.licenses add column if not exists subscription_id text not null default '';
 alter table coursera_queue.licenses drop constraint licenses_pkey;
 alter table coursera_queue.licenses add primary key(user_id,source,subscription_id);
--- Unknown legacy Stripe subscriptions must be reconciled by a signed webhook.
-update coursera_queue.licenses set status='revoked' where source='stripe';
+-- Preserve existing paid access. A populated older deployment requires an
+-- explicit subscription mapping before changing its entitlement key.
+do $$
+begin
+  if exists(select 1 from coursera_queue.licenses where source='stripe' and subscription_id='') then
+    raise exception 'Map existing Stripe licenses to subscription IDs before applying this migration';
+  end if;
+end;
+$$;
 
 create or replace function public.cq_dispatch(secret text, operation text, payload jsonb default '{}')
 returns jsonb language plpgsql security definer set search_path = '' as $$

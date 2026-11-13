@@ -3,7 +3,7 @@ import { readFile, writeFile, mkdir, cp } from "node:fs/promises";
 import { resolve } from "node:path";
 import { existsSync } from "node:fs";
 if (existsSync(".env")) process.loadEnvFile(".env");
-const out = resolve("dist/extension");
+const out = resolve(process.env.BUILD_EXTENSION_DIR || "dist/extension");
 const api = process.env.BUILD_API_ORIGIN;
 await mkdir("platform/build", { recursive: true });
 await build({ entryPoints: ["platform/server/index.ts"], outfile: "platform/build/server.mjs",
@@ -63,6 +63,7 @@ manifest.host_permissions.push(new URL(process.env.SUPABASE_URL).origin + "/*");
 await writeFile(out + "/manifest.json", JSON.stringify(manifest, null, 2));
 await mkdir(out + "/helper", { recursive: true });
 await cp("helper/coordinator.py", out + "/helper/coordinator.py");
+await cp("platform/extension/README.md", out + "/README.md");
 const built = await readFile(out + "/src/worker.js", "utf8");
 if (built.includes("Верни один объект JSON") || built.includes("zipEntries")) {
   throw new Error("Private engine code leaked into the browser bundle.");

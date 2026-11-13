@@ -1,5 +1,6 @@
 import { createClient, type SupabaseClient } from "@supabase/supabase-js";
 import { Hold, Manual } from "../../src/core.js";
+import { readIdentityFields } from "./identity";
 declare const __API_ORIGIN__: string;
 const API = __API_ORIGIN__;
 const ALARM = "cq-license";
@@ -117,22 +118,7 @@ async function courseraIdentity() {
     while (Date.now() < deadline) {
       const results = await chrome.scripting.executeScript({
         target: { tabId: tab.id },
-        func: () => {
-          if (!["www.coursera.org", "coursera.org"].includes(location.hostname) || location.pathname !== "/account-settings") return null;
-          const inputs = [...document.querySelectorAll<HTMLInputElement>("input")].filter(node => node.getClientRects().length && node.type !== "password");
-          const description = (node: HTMLInputElement) => [
-            ...[...(node.labels || [])].map(label => label.textContent || ""),
-            node.getAttribute("aria-label") || "",
-            ...(node.getAttribute("aria-labelledby") || "").split(" ").map(id => document.getElementById(id)?.textContent || "")
-          ].join(" ").trim().replace(/\s+/g, " ");
-          const names = inputs.filter(node => /^(?:full name|полное имя|имя и фамилия)\s*\*?$/i.test(description(node)) ||
-            node.autocomplete === "name");
-          const emails = inputs.filter(node => /^(?:email address|email|электронная почта|адрес электронной почты)\s*\*?$/i.test(description(node)) ||
-            node.type === "email");
-          if (names.length !== 1 || emails.length !== 1) return null;
-          const name = names[0].value.trim(), email = emails[0].value.trim();
-          return name && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email) ? { name, email } : null;
-        }
+        func: readIdentityFields
       }).catch(() => []);
       const identity = results[0]?.result;
       if (identity) {
